@@ -28,12 +28,14 @@ function Router() {
 
 function App() {
   return (
+    <div className="w-[500px] mx-auto">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Router />
       </TooltipProvider>
     </QueryClientProvider>
+    </div>
   );
 }
 
