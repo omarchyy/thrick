@@ -1,4 +1,4 @@
-import { Home, Search, BarChart3, User } from "lucide-react";
+import { Home, Search, BarChart3, User, MessageCircle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
@@ -12,12 +12,14 @@ export default function Navigation({ onNavigate }: NavigationProps) {
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Search, label: "Browse", path: "/browse" },
+    { icon: Plus, label: "Create", path: "/create" },
+    { icon: MessageCircle, label: "Social", path: "/social" },
     { icon: BarChart3, label: "Progress", path: "/progress" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
   return (
-    <div className="flex justify-around items-center p-4 bg-background border-t border-border">
+    <div className="flex justify-around items-center gap-1 p-2 bg-background border-t border-border overflow-x-auto">
       {navItems.map((item) => {
         const isActive = location === item.path;
         return (
@@ -25,7 +27,7 @@ export default function Navigation({ onNavigate }: NavigationProps) {
             key={item.path}
             variant="ghost"
             size="icon"
-            className={`flex flex-col gap-1 h-auto py-2 px-4 ${
+            className={`flex flex-col gap-1 h-auto py-2 px-2 min-w-0 flex-shrink-0 ${
               isActive ? "text-primary" : "text-muted-foreground"
             }`}
             onClick={() => {
@@ -34,8 +36,8 @@ export default function Navigation({ onNavigate }: NavigationProps) {
             }}
             data-testid={`nav-${item.label.toLowerCase()}`}
           >
-            <item.icon className="h-5 w-5" />
-            <span className="text-xs">{item.label}</span>
+            <item.icon className="h-4 w-4" />
+            <span className="text-xs whitespace-nowrap">{item.label}</span>
           </Button>
         );
       })}

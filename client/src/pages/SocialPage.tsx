@@ -5,15 +5,44 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import { useLocation } from "wouter";
+
+// Form schemas
+const messageFormSchema = z.object({
+  message: z.string().min(1, "Message cannot be empty"),
+});
+
+const addFriendFormSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+});
 
 export default function SocialPage() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<"messages" | "friends">("messages");
   const [selectedFriend, setSelectedFriend] = useState<number | null>(1);
-  const [newMessage, setNewMessage] = useState("");
-  const [newFriendUsername, setNewFriendUsername] = useState("");
+  const { toast } = useToast();
+
+  // Message form
+  const messageForm = useForm<z.infer<typeof messageFormSchema>>({
+    resolver: zodResolver(messageFormSchema),
+    defaultValues: {
+      message: "",
+    },
+  });
+
+  // Add friend form
+  const addFriendForm = useForm<z.infer<typeof addFriendFormSchema>>({
+    resolver: zodResolver(addFriendFormSchema),
+    defaultValues: {
+      username: "",
+    },
+  });
 
   // Mock data - todo: remove mock functionality
   const [friends] = useState([
@@ -59,7 +88,7 @@ export default function SocialPage() {
       id: 2,
       friendId: 1,
       sender: "Me",
-      message: "That's awesome! I just finished my nature walk. The fresh air was so refreshing 🌳",
+      message: "That's awesome! I just finished my nature walk. The fresh air was so refreshing!",
       timestamp: "10:35 AM", 
       isMe: true
     },
@@ -76,29 +105,29 @@ export default function SocialPage() {
   const selectedFriendData = friends.find(f => f.id === selectedFriend);
   const friendMessages = messages.filter(m => m.friendId === selectedFriend);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() && selectedFriend) {
+  const handleSendMessage = (values: z.infer<typeof messageFormSchema>) => {
+    if (selectedFriend) {
       const newMsg = {
         id: messages.length + 1,
         friendId: selectedFriend,
         sender: "Me",
-        message: newMessage.trim(),
+        message: values.message,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isMe: true
       };
       setMessages([...messages, newMsg]);
-      setNewMessage("");
-      console.log(`Sent message: ${newMessage}`);
+      messageForm.reset();
+      console.log(`Sent message: ${values.message}`);
     }
   };
 
-  const handleAddFriend = () => {
-    if (newFriendUsername.trim()) {
-      console.log(`Adding friend: ${newFriendUsername}`);
-      setNewFriendUsername("");
-      // Mock success feedback
-      alert(`Friend request sent to ${newFriendUsername}!`);
-    }
+  const handleAddFriend = (values: z.infer<typeof addFriendFormSchema>) => {
+    console.log(`Adding friend: ${values.username}`);
+    addFriendForm.reset();
+    toast({
+      title: "Friend request sent!",
+      description: `Friend request sent to ${values.username}`,
+    });
   };
 
   return (
@@ -217,23 +246,32 @@ export default function SocialPage() {
 
                   {/* Message Input */}
                   <div className="p-4 border-t border-border">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Type your message..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                        className="flex-1"
-                        data-testid="input-message"
-                      />
-                      <Button 
-                        onClick={handleSendMessage}
-                        size="icon"
-                        data-testid="button-send-message"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Form {...messageForm}>
+                      <form onSubmit={messageForm.handleSubmit(handleSendMessage)} className="flex gap-2">
+                        <FormField
+                          control={messageForm.control}
+                          name="message"
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  placeholder="Type your message..."
+                                  data-testid="input-message"
+                                  {...field}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <Button 
+                          type="submit"
+                          size="icon"
+                          data-testid="button-send-message"
+                        >
+                          <Send className="h-4 w-4" />
+                        </Button>
+                      </form>
+                    </Form>
                   </div>
                 </>
               ) : (
@@ -253,23 +291,32 @@ export default function SocialPage() {
                 <UserPlus className="h-5 w-5" />
                 Add Friend
               </h3>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Enter username..."
-                  value={newFriendUsername}
-                  onChange={(e) => setNewFriendUsername(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleAddFriend()}
-                  className="flex-1"
-                  data-testid="input-add-friend"
-                />
-                <Button 
-                  onClick={handleAddFriend}
-                  data-testid="button-add-friend"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add
-                </Button>
-              </div>
+              <Form {...addFriendForm}>
+                <form onSubmit={addFriendForm.handleSubmit(handleAddFriend)} className="flex gap-2">
+                  <FormField
+                    control={addFriendForm.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormControl>
+                          <Input
+                            placeholder="Enter username..."
+                            data-testid="input-add-friend"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <Button 
+                    type="submit"
+                    data-testid="button-add-friend"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Add
+                  </Button>
+                </form>
+              </Form>
             </Card>
 
             {/* Friends List */}
