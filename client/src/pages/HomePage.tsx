@@ -4,7 +4,7 @@ import QuestCard from "@/components/QuestCard";
 import AICompanion from "@/components/AICompanion";
 import JourneyCard from "@/components/JourneyCard";
 import Navigation from "@/components/Navigation";
-import { Droplets, Dumbbell, Footprints, Heart, Brain, Zap } from "lucide-react";
+import { Droplets, TreePine, Wind, Heart, Brain, Zap } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function HomePage() {
@@ -14,24 +14,24 @@ export default function HomePage() {
   const [quests] = useState([
     {
       id: 1,
-      title: "Hydration",
-      progress: { current: 1, total: 2, unit: "L" },
-      icon: <Droplets className="h-6 w-6 text-primary" />,
-      iconBgColor: "bg-primary/20"
+      title: "Drink 8 Glasses of Water",
+      progress: { current: 2, total: 8, unit: " glasses" },
+      icon: <Droplets className="h-6 w-6 text-blue-600" />,
+      iconBgColor: "bg-blue-100"
     },
     {
       id: 2,
-      title: "Leg workout",
-      progress: { current: 15, total: 25, unit: "m" },
-      icon: <Dumbbell className="h-6 w-6 text-orange-600" />,
-      iconBgColor: "bg-orange-100"
+      title: "Go for a Walk Outside",
+      progress: { current: 0, total: 30, unit: " minutes" },
+      icon: <TreePine className="h-6 w-6 text-green-600" />,
+      iconBgColor: "bg-green-100"
     },
     {
       id: 3,
-      title: "3k Steps to go",
-      progress: { current: 0, total: 3000, unit: " steps" },
-      icon: <Footprints className="h-6 w-6 text-gray-600" />,
-      iconBgColor: "bg-gray-100"
+      title: "Take 5 Deep Breaths",
+      progress: { current: 0, total: 5, unit: " breaths" },
+      icon: <Wind className="h-6 w-6 text-teal-600" />,
+      iconBgColor: "bg-teal-100"
     }
   ]);
 
@@ -73,8 +73,8 @@ export default function HomePage() {
         <div className="p-6 space-y-6">
           {/* Today's Plan Section */}
           <section>
-            <h2 className="text-2xl font-bold text-foreground mb-4" data-testid="text-todays-plan">
-              Today's plan
+            <h2 className="text-2xl font-bold text-foreground mb-4" data-testid="text-todays-quests">
+              Today's quests
             </h2>
             <div className="space-y-3">
               {quests.map((quest) => (
