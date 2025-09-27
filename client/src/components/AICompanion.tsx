@@ -33,14 +33,16 @@ export default function AICompanion({ onAskAI }: AICompanionProps) {
           </div>
         </div>
         
-        <Button 
-          size="icon" 
-          variant="ghost"
-          onClick={onAskAI}
+        <a 
+        //   size="icon" 
+        //   variant="ghost"
+        //   onClick={() => window.location.href = "/ai.html"}
           data-testid="button-ask-ai"
+          href="ai.html"
+          
         >
           <ChevronRight className="h-5 w-5" />
-        </Button>
+        </a>
       </div>
     </Card>
   );
