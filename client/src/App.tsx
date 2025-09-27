@@ -10,7 +10,6 @@ import SocialPage from "@/pages/SocialPage";
 import ProgressPage from "@/pages/ProgressPage";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/not-found";
-import AIPage from "./pages/AiPage";
 
 function Router() {
   return (
@@ -21,7 +20,6 @@ function Router() {
       <Route path="/social" component={SocialPage} />
       <Route path="/progress" component={ProgressPage} />
       <Route path="/profile" component={ProfilePage} />
-      <Route path="/ai" component={AIPage} /> {/* Add this */}
 
       {/* Fallback to 404 */}
       <Route component={NotFound} />
